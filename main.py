@@ -1,6 +1,7 @@
 import discord
 import os
-import requests
+import aiohttp
+import asyncio
 from datetime import datetime
 from discord import app_commands
 from discord.ext import commands
@@ -12,6 +13,9 @@ weatherAPIKey = os.getenv("weatherAPIKey")
 
 if not TOKEN:
     raise RuntimeError("missing bot token, add it please!!")
+
+if not weatherAPIKey:
+    raise RuntimeError("missing openweather api key")
 
 intents = discord.Intents.default()
 client = commands.Bot(command_prefix="!", intents=intents)
@@ -31,17 +35,31 @@ async def weather(interaction: discord.Interaction, city: str):
         "https://api.openweathermap.org/data/2.5/weather"
         f"?q={city}&appid={weatherAPIKey}&units=metric"
     )
+    params = {
+        "q": city,
+        "appid": weatherAPIKey,
+        "units": "metric"
+    }
 
     try:
-        response = requests.get(url, timeout=10)
-        data = response.json()
-    except Exception:
-        await interaction.followup.send("api error")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                if response.status != 200:
+                    await interaction.followup.send(
+                        "False city name"
+                    )
+                    return
+
+                data = await response.json()
+
+    except aiohttp.ClientError:
+        await interaction.followup.send("failure with api")
+        return
+    except asyncio.TimeoutError:
+        await interaction.followup.send("timedout")
         return
 
-    if response.status_code != 200:
-        await interaction.followup.send("False city name")
-        return
+
 
     temp = data["main"]["temp"]
     feelsLike = data["main"]["feels_like"]
