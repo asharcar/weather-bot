@@ -1,8 +1,8 @@
-# weather-bot by asharcar
+# Weather bot
 
-random project i made in my freetime when i was bored
+Boredom project.
 
-features:
+Features:
 - temperature
 - feels like temperature
 - weather details on a specific city
@@ -10,22 +10,21 @@ features:
 - condition
 - more
 
-# installation guide
+# Installation guide
 
-1. clone this:
+1. Clone this:
 ``` bash
 git clone https://github.com/asharcar/weather-bot
 cd weather-bot
 ```
 
-2. install dependencies:
+2. Install dependencies:
 ``` bash
 pip install -r requirements.txt
 ```
 
-3. run the bot:
+3. Run the bot:
 ``` bash
 python main.py
 ```
-make sure to add your discord bot token and openweather api key into the .env file, replace whatever is in the = to the actual token/key, i added that as a placeholder
-more features soon maybe idk
+Rename .env.example to .env, and input your tokens in .env
